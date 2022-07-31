@@ -1,0 +1,26 @@
+#box {
+    background-color: rgb(255, 228, 196);
+    height: 300px;
+    width: 700px;
+    visibility: hidden;
+}
+
+body {
+    background-color: aqua;
+}
+
+#box.show {
+    visibility: visible;
+}
+
+#close-btn {
+    float: right;
+}
+
+.container .close {
+    position: relative;
+    right: 5px;
+    top: 10px;
+    color: rgb(255, 9, 9);
+    font-size: 30px;
+}
