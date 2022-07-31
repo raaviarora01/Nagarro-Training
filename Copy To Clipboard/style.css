@@ -1,0 +1,48 @@
+*{
+    font-family: 'Noto Serif', serif;
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    background-image: url("./bgimage.jpg");
+    background-size: cover;
+}
+
+h1{
+    background-color: rgba(73, 64, 64, 0.595);
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+    transform: translate(20%, 50%);
+}
+
+.one, .two, .three{
+    text-align: center;
+}
+
+.one{
+    margin-top: 50px;
+}
+
+.two, .three{
+    margin-top: 50px;
+}
+
+textarea{
+    border-radius: 5px;
+    background-color: rgba(227, 202, 226, 0.851);
+}
+
+#btn{
+    font-size: large;
+    height: 40px;
+    width: 150px;
+    background-color: rgb(188, 115, 214);
+    border: none;
+    color: white;
+    border-radius: 10px;
+}
+
+::selection{
+    background: rgb(223, 157, 173);
+}
