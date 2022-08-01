@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>Image Slider using JavaScript</title>
+  </head>
+  <body>
+    <div class="slide-container">
+      <div class="images">
+        <img src="./images/img1.jpg" class="fade" />
+        <img src="./images/img2.jpg" class="fade" />
+        <img src="./images/img3.jpg" class="fade" />
+        <img src="./images/img4.jpg" class="fade" />
+        <img src="./images/img5.jpg" class="fade" />
+      </div>
+
+      <!-- Next and Previous buttons -->
+      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+      <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+      <!-- Dots -->
+      <div class="sliders">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+        <span class="dot" onclick="currentSlide(5)"></span>
+      </div>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
