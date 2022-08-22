@@ -26,3 +26,7 @@ https://raaviarora01.github.io/Nagarro-Training/Copy%20To%20Clipboard
 Image Slider using JavaScript
 
 https://raaviarora01.github.io/Nagarro-Training/Image%20Slider%20Using%20JavaScript
+
+Nagarro Internship Project 1 - TWITTER CLONE
+
+https://raaviarora01.github.io/Nagarro-Training/Nagarro-Internship-Project-1
