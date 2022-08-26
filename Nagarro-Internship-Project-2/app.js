@@ -1,105 +1,103 @@
 const express = require("express");
-const app = express();
-const path = require("path");
 const mongoose = require("mongoose");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+const app = express();
+require("dotenv").config();
+const seed = require("./seed");
+const prodRoutes = require("./routes/product");
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
+const orderRoute = require("./routes/orders");
+const adminRoute = require("./routes/admin");
+const methodOverride = require("method-override");
 const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local");
-const User = require("./models/user");
 const flash = require("connect-flash");
-const { isLoggedIn } = require('./middleware')
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const User = require("./models/user");
+// const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-//chatting app
-const http = require('http');
-const server = http.createServer(app);
-const socketio = require("socket.io");
-const io = socketio(server);
-const Chat = require('./models/chat')
+const port = process.env.PORT || 4000;
+
+mongoose.connect("mongodb+srv://raavi:Raavi123@cluster0.kiq1vld.mongodb.net/places?retryWrites=true&w=majority")
+  .then(() => app.listen(port, () => console.log(`Server running on http://localhost:${port}`)))
+  .then(() => console.log("Connected to database and listening on port 5000"))
+  .catch((err) => console.log(err));
 
 
+app.use(
+  session({
+    name: "ecomv1_id",
+    secret: "thisistopsecretstuffdude",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(flash());
+//Initializing..
+app.use(passport.initialize());
+app.use(passport.session());
+//configure passport use local stratergy
+// passport.use(new LocalStrategy(User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate())); // for login logout session
 
+//Configuring Google Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GA_clientID,
+      clientSecret: process.env.GA_clientSecret,
+      callbackURL: process.env.GA_callbackURL,
+    },
+    async function (accessToken, refreshToken, profile, done) {
+      const profileDetails = {
+        username: profile.displayName,
+        googleid: profile.id,
+        email: profile.emails[0].value,
+        photo: profile.photos[0].value,
+      };
+      await User.findOrCreate(profileDetails, function (err, user) {
+        return done(err, user);
+      });
+    }
+  )
+);
 
-mongoose.connect('mongodb://localhost:27017/twitter')
-    .then(() => {
-        console.log("db connected");
-    })
-    .catch((err) => {
-        console.log(err);
-    })
+//SERIALIZE AND DESERIALIZING
+passport.serializeUser(User.serializeUser());
+// passport.serializeUser((user,done)=>{
+//     done(null,user);
+// })
+passport.deserializeUser(User.deserializeUser());
+// passport.deserializeUser((user,done)=>{
+//     done(null,user)
+// })
+//Serializing and Deserializing for google authenticate
 
+app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// Routes
-
-const authRoutes = require("./routes/auth");
-const profileRoutes = require("./routes/profileRoutes");
-const chatRoutes = require("./routes/chatRoute");
-
-// APIs
-
-const postApiRoute = require("./routes/api/posts");
-const { accessSync } = require("fs");
-
-app.use(
-    session({
-        secret: "weneedasomebettersecret",
-        resave: false,
-        saveUninitialized: true,
-    })
-);
-
-app.use(flash());
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
+//seed();
+//This will automatically call the flash Object
 app.use((req, res, next) => {
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    res.locals.currentUser = req.user;
-    next();
+  res.locals.status = req.flash("status");
+  res.locals.register = req.flash("register");
+  res.locals.login = req.flash("login");
+  res.locals.loginUser = req.user;
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
 });
-
-app.get("/", isLoggedIn, (req, res) => {
-    res.render("home");
-});
-
-// Routes
+app.use(prodRoutes);
 app.use(authRoutes);
-app.use(profileRoutes);
-app.use(chatRoutes);
-
-
-
-// APIs
-
-app.use(postApiRoute);
-
-
-//connnection
-io.on("connection", (socket) => {
-    console.log("connection established")
-
-    socket.on("send-msg", async (data) => {
-        io.emit("recived-msg", {
-            msg: data.msg,
-            user: data.user,
-            createdAt: new Date(),
-        });
-        await Chat.create({ content: data.msg, user: data.user })
-    })
+app.use(userRoutes);
+app.use(orderRoute);
+app.use(adminRoute);
+app.use('*', (req, res) => {
+  res.render('error/error')
 })
-
-const port = process.env.PORT || 8080
-
-server.listen(port, () => {
-    console.log("Server running at port 8080");
-});
