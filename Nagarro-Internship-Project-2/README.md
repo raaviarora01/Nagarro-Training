@@ -1,8 +1,6 @@
-# Apna Cart
+# One Stop
 
 An E-commerce application built with CRUD functionality, and REST architechture.
-
-> Deployed at  https://apna-cartv1.herokuapp.com/
 
 ### Tech Stack :-
 - EJS
